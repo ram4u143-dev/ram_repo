@@ -1,0 +1,27 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/logical-graph-469211-r3/bank-campaign-model', '.']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/logical-graph-469211-r3/bank-campaign-model']
+
+- name: 'gcr.io/logical-graph-469211-r3/bank-campaign-model'
+  entrypoint: 'bash'
+  args:
+   - '-c'
+   - |
+      python -m pytest
+
+- name: 'gcr.io/cloud-builders/git'
+  args: ['clone', 'https://github.com/ram4u143-dev/ram_repo.git']
+
+
+- name: 'gcr.io/cloud-builders/gsutil'
+  args: ['cp', 'ml-project/bank_campaign_model_training.py', 'gs://us-central1-myproject-aiflo-afcfd1f3-bucket/dags']
+  
+
+images:
+- 'gcr.io/bustracking-467614/bank-campaign-model'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
